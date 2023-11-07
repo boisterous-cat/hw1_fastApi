@@ -46,7 +46,15 @@ def root()->Timestamp:
     max_id = max(post_db, key=attrgetter('id')).id
     return post_db[max_id]
 
-@app.get("/dog")
+@app.post("/post", summary='Get Post')
+def createTimestamp():
+    max_id = max(post_db, key=attrgetter('id')).id
+    new_id = max_id+1
+    new_timestamp = Timestamp(id=new_id, timestamp=round(datetime.now().timestamp()))
+    post_db.append((new_timestamp))
+    return new_timestamp
+
+@app.get("/dog",summary='Get Dogs')
 def dogByType(dogType:DogType)->list:
     #list(dogs_db.keys())[list(dogs_db.values()).index(dogType)]
     result=[]
@@ -56,24 +64,6 @@ def dogByType(dogType:DogType)->list:
         if (curType.__contains__(dogType)):
             result.append(curDog)
     return result
-
-@app.get("/dog/{pk}")
-def dogByPk(pk:int)->Dog:
-    result:Dog
-    for key,value in dogs_db.items():
-        curDog = value
-        curPk = curDog.pk
-        if (curPk==pk):
-            result = curDog
-    return result
-
-@app.post("/post")
-def createTimestamp():
-    max_id = max(post_db, key=attrgetter('id')).id
-    new_id = max_id+1
-    new_timestamp = Timestamp(id=new_id, timestamp=round(datetime.now().timestamp()))
-    post_db.append((new_timestamp))
-    return new_timestamp
 
 @app.post("/dog", response_model=Dog, summary='Create Dog')
 def createDog(dog:Dog)->Dog:
@@ -86,6 +76,16 @@ def createDog(dog:Dog)->Dog:
     else:
         dogs_db[dog.pk]=dog
     return dog
+
+@app.get("/dog/{pk}", response_model=Dog, summary='Get Dog By Pk')
+def dogByPk(pk:int)->Dog:
+    result:Dog
+    for key,value in dogs_db.items():
+        curDog = value
+        curPk = curDog.pk
+        if (curPk==pk):
+            result = curDog
+    return result
 
 @app.patch("/dog/{pk}", response_model=Dog, summary='Update Dog')
 def updateDog(pk:int, dog:Dog)->Dog:
