@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime, date, time
 from operator import attrgetter
 from fastapi.encoders import jsonable_encoder
+from typing import List
 
 app = FastAPI()
 
@@ -55,7 +56,7 @@ def createTimestamp():
     return new_timestamp
 
 @app.get("/dog",summary='Get Dogs')
-def dogByType(kind:DogType)->list[Dog]:
+def dogByType(kind:DogType)->List[Dog]:
     #list(dogs_db.keys())[list(dogs_db.values()).index(dogType)]
     result=[]
     for key,value in dogs_db.items():
