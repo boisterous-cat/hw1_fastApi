@@ -46,7 +46,7 @@ def root()->Timestamp:
     max_id = max(post_db, key=attrgetter('id')).id
     return post_db[max_id]
 
-@app.post("/post", summary='Get Post')
+@app.post("/post", response_model=Timestamp, summary='Get Post')
 def createTimestamp():
     max_id = max(post_db, key=attrgetter('id')).id
     new_id = max_id+1
@@ -55,13 +55,13 @@ def createTimestamp():
     return new_timestamp
 
 @app.get("/dog",summary='Get Dogs')
-def dogByType(dogType:DogType)->list:
+def dogByType(kind:DogType)->list[Dog]:
     #list(dogs_db.keys())[list(dogs_db.values()).index(dogType)]
     result=[]
     for key,value in dogs_db.items():
         curDog = value
         curType = curDog.kind
-        if (curType.__contains__(dogType)):
+        if (curType.__contains__(kind)):
             result.append(curDog)
     return result
 
